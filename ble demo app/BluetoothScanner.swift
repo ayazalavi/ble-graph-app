@@ -10,27 +10,23 @@ import Foundation
 import UIKit
 import CoreBluetooth
 
-class BluetoothScanner: NSObject, BluetoothManager {
+
+class BluetoothScanner: NSObject {
    
     var centralManager: CBCentralManager?
     let semaphore = DispatchSemaphore(value: 0)
     var readTimer: Timer?
-    let cbuuids = Product.getAddedProductsCBUUIDs()
-    var seatData: SeatData?
-    var notifSent = false
+    let cbuuid = CBUUID(string: "4fafc201-1fb5-459e-8fcc-c5c9c331914b")
+    var data: DataObject?
+    weak var delegate: DataDelegate?
+    let restoreID = "APP_ID"
     
     private(set) var peripherals = Dictionary<UUID, CBPeripheral>() {
         didSet {
             //self.connectToPeripherals()
         }
     }
-    
-    weak var delegate: SnuggoWidgetDelegate? {
-           didSet {
-               delegate?.updatePowerStatus(power: centralManager?.state == .poweredOn ? true : false)
-           }
-       }
-    
+
     // MARK: Singleton
     static let shared = BluetoothScanner()
     
@@ -43,15 +39,13 @@ class BluetoothScanner: NSObject, BluetoothManager {
     @objc func startScanning() {
         print("start scanning")
         guard let central = self.centralManager else {
-            centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "\(KEYS.PRODUCTS)"])
-            for uuid in cbuuids {
-                if let uuids = UUID(uuidString: uuid.uuidString) {
-                    if let peripherals_ = centralManager?.retrievePeripherals(withIdentifiers: [uuids]) {
-                        _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
-                    }
-                    if let peripherals_ = centralManager?.retrieveConnectedPeripherals(withServices: cbuuids) {
-                        _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
-                    }
+            centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "\(restoreID)"])
+            if let uuid = UUID(uuidString: cbuuid.uuidString) {
+                if let peripherals_ = centralManager?.retrievePeripherals(withIdentifiers: [uuid]) {
+                    _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
+                }
+                if let peripherals_ = centralManager?.retrieveConnectedPeripherals(withServices: [cbuuid]) {
+                    _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
                 }
             }
             //print("\(self.peripherals)")
@@ -62,10 +56,11 @@ class BluetoothScanner: NSObject, BluetoothManager {
             if central.isScanning {
                 central.stopScan()
             }
-            central.scanForPeripherals(withServices: cbuuids, options: nil)
+            central.scanForPeripherals(withServices: [cbuuid], options: nil)
             
-            let peripherals_ = central.retrievePeripherals(withIdentifiers: cbuuids.map( { UUID(uuidString: $0.uuidString)! }))
-            let peripherals__ = central.retrieveConnectedPeripherals(withServices: cbuuids)
+            let peripherals_ = central.retrievePeripherals(withIdentifiers: [UUID(uuidString: cbuuid.uuidString)!])
+            let peripherals__ = central.retrieveConnectedPeripherals(withServices: [cbuuid])
+            print(peripherals_, peripherals__, separator: " - ")
             let queue = DispatchQueue.global(qos: .background)
             queue.async { [weak self] in
                 _ = peripherals_.map({
@@ -77,7 +72,9 @@ class BluetoothScanner: NSObject, BluetoothManager {
                     central.cancelPeripheralConnection($0)
                     self?.peripherals[$0.identifier] = $0
                 })
-                self?.semaphore.wait()
+                if peripherals__.count > 0 || peripherals_.count > 0 {
+                    self?.semaphore.wait()
+                }
                 DispatchQueue.main.async {
                     self?.connectToPeripherals()
                 }
@@ -85,11 +82,14 @@ class BluetoothScanner: NSObject, BluetoothManager {
             
         }
         else {
-            NotificationManager.sendNotifications(title: "Snuggo requires bluetooth", message: "Please turn on bluetooth from settings", type: .NO_BLUETOOTH_NOTIFICATION)
+            let alert = UIAlertController(title: "Bluetooth needed", message: "Please turn on bluetooth", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Go to Settings", style: .cancel, handler: { (_) in
+                UIApplication.shared.open(URL(string: "App-Prefs:root=Bluetooth")!, options: [.universalLinksOnly: false], completionHandler: nil)
+            }))
+            delegate?.showError(alert: alert)
         }
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false, block: { [weak self] timer in
             self?.readTimer?.invalidate()
-            self?.notifSent = false
         })
     }
     
@@ -97,13 +97,11 @@ class BluetoothScanner: NSObject, BluetoothManager {
         guard let central = self.centralManager else { return }
         
         if central.state == .poweredOn {
-            for uuid in cbuuids {
-                if let uuids = UUID(uuidString: uuid.uuidString) {
-                    let peripherals_ = central.retrievePeripherals(withIdentifiers: [uuids])
-                    _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
-                    let peripherals__ = central.retrieveConnectedPeripherals(withServices: cbuuids)
-                    _ = peripherals__.map({self.peripherals[$0.identifier] = $0})
-                }
+            if let uuids = UUID(uuidString: cbuuid.uuidString) {
+                let peripherals_ = central.retrievePeripherals(withIdentifiers: [uuids])
+                _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
+                let peripherals__ = central.retrieveConnectedPeripherals(withServices: [cbuuid])
+                _ = peripherals__.map({self.peripherals[$0.identifier] = $0})
             }
             DispatchQueue.global(qos: .background).async { [weak self] in
                 _ = self?.peripherals.mapValues {
@@ -120,9 +118,7 @@ class BluetoothScanner: NSObject, BluetoothManager {
         }
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { [weak self] timer in
             self?.peripherals.removeAll()
-            self?.delegate?.updatePowerStatus(power: false)
             self?.readTimer?.invalidate()
-            self?.notifSent = false
         })
     }
 
@@ -137,6 +133,7 @@ class BluetoothScanner: NSObject, BluetoothManager {
                 central.cancelPeripheralConnection($0)
             }
         }
+        delegate?.save()
         Timer.scheduledTimer(withTimeInterval: 3, repeats: false, block: { [weak self] timer in
             self?.centralManager = nil
         })
@@ -156,16 +153,6 @@ class BluetoothScanner: NSObject, BluetoothManager {
                 if peripheral.state != .connected {
                     central.connect(peripheral, options: nil)
                     self?.semaphore.wait()
-                    if let seat = self?.seatData, seat.weight > 0, let notif = self?.notifSent {
-                        if !notif {
-                            NotificationManager.sendNotifications(title: "CHILD LEFT IN SEAT ALERT", message: "Your child is still in the car seat, please ensure a responsible adult is with the child.", type: .CHILD_LEFT_IN)
-                            self?.delegate?.childLeftInCarSeat(left: true)
-                            self?.notifSent = true
-                        }
-                    }
-                } else {
-                    self?.notifSent = false
-                    self?.delegate?.childLeftInCarSeat(left: false)
                 }
             })
         }
@@ -175,10 +162,6 @@ class BluetoothScanner: NSObject, BluetoothManager {
 // MARK: Central Manager Delegate
 extension BluetoothScanner: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if delegate != nil {
-            delegate?.updatePowerStatus(power: central.state == .poweredOn ? true : false)
-        }
-        
         startScanning()
     }
     
@@ -194,7 +177,7 @@ extension BluetoothScanner: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.delegate = self
-        peripheral.discoverServices(cbuuids)
+        peripheral.discoverServices([cbuuid])
         print("Connected")
         semaphore.signal()
     }
@@ -202,6 +185,7 @@ extension BluetoothScanner: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Disconnected \(String(describing: error))")
         semaphore.signal()
+        self.connectToPeripherals()
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -242,32 +226,34 @@ extension BluetoothScanner: CBPeripheralDelegate {
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        if let data = characteristic.value, let json = String(bytes: data, encoding: .utf8)?.data(using: .utf8) {
-            do {
-                print(String(bytes: data, encoding: .utf8) ?? "")
-                seatData = try JSONDecoder().decode(SeatData.self, from: json)
-                if let seatData = seatData {
-                    delegate?.updateCarSeatSensorsData(seat: seatData)
-                    if seatData.weight == 0 {
-                        if !self.notifSent {
-                            NotificationManager.sendNotifications(title: "CHILD LEFT SEAT ALERT", message: "Your child has left their car seat. If this was intentional then the SMART system will switch off in 60 seconds.", type: .CHILD_LEFT_IN)
-                            self.delegate?.childLeftCarSeat(left: true)
-                            self.notifSent = true
-                        }
-                    }
-                    else {
-                        self.notifSent = false
-                        self.delegate?.childLeftCarSeat(left: false)
-                    }
-                                        
-                }
-            } catch {
-                print(error)
-            }
+        if let data = characteristic.value, let stringData = String(bytes: data, encoding: .utf8) {
+            print(stringData)
+            let arr: [Double] = stringData.components(separatedBy: ",").map({ $0.toDouble() })
+            guard arr.count == BLE.allCases.count else { return }
+            let acc: SENSORS = SENSORS.Accelerometer(arr[BLE.AX.rawValue], arr[BLE.AY.rawValue], arr[BLE.AZ.rawValue])
+            let gyr: SENSORS = SENSORS.GYRO(arr[BLE.GX.rawValue], arr[BLE.GY.rawValue], arr[BLE.GZ.rawValue])
+            let mag: SENSORS = SENSORS.MAGNEOMETER(arr[BLE.MX.rawValue], arr[BLE.MY.rawValue], arr[BLE.MZ.rawValue])
+            let alt: SENSORS = SENSORS.ALTITUDE(arr[BLE.EV.rawValue].toInt())
+            let dataObject = DataObject(accelerometer: acc, gyro: gyr, magneto: mag, altitude: alt)
+            delegate?.sendData(data: dataObject)
         }
     }
     
    
+}
+
+fileprivate extension String {
+    
+    func toDouble() -> Double {
+        return (self as NSString).doubleValue
+    }
+}
+
+fileprivate extension Double {
+    
+    func toInt() -> Int {
+        return Int(self)
+    }
 }
 
 

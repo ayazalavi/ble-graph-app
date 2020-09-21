@@ -7,3 +7,13 @@
 //
 
 import Foundation
+import UIKit
+
+protocol DataDelegate: NSObject {
+    
+    func sendData(data: DataObject)
+    
+    func showError(alert: UIAlertController)
+    
+    func save()
+}

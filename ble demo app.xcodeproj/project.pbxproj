@@ -15,6 +15,9 @@
 		B515BD622518858B00D0D456 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B515BD602518858B00D0D456 /* LaunchScreen.storyboard */; };
 		B515BD6D2518858B00D0D456 /* ble_demo_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B515BD6C2518858B00D0D456 /* ble_demo_appTests.swift */; };
 		B515BD782518858B00D0D456 /* ble_demo_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B515BD772518858B00D0D456 /* ble_demo_appUITests.swift */; };
+		B515BD86251885C900D0D456 /* BluetoothScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B515BD85251885C900D0D456 /* BluetoothScanner.swift */; };
+		B515BD88251885E400D0D456 /* DataObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = B515BD87251885E400D0D456 /* DataObject.swift */; };
+		B515BD8A2518867F00D0D456 /* DataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B515BD892518867F00D0D456 /* DataDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,9 @@
 		B515BD732518858B00D0D456 /* ble demo appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ble demo appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B515BD772518858B00D0D456 /* ble_demo_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ble_demo_appUITests.swift; sourceTree = "<group>"; };
 		B515BD792518858B00D0D456 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B515BD85251885C900D0D456 /* BluetoothScanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothScanner.swift; sourceTree = "<group>"; };
+		B515BD87251885E400D0D456 /* DataObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataObject.swift; sourceTree = "<group>"; };
+		B515BD892518867F00D0D456 /* DataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +105,7 @@
 		B515BD542518858800D0D456 /* ble demo app */ = {
 			isa = PBXGroup;
 			children = (
+				B515BD85251885C900D0D456 /* BluetoothScanner.swift */,
 				B515BD552518858800D0D456 /* AppDelegate.swift */,
 				B515BD572518858800D0D456 /* SceneDelegate.swift */,
 				B515BD592518858800D0D456 /* ViewController.swift */,
@@ -106,6 +113,8 @@
 				B515BD5E2518858B00D0D456 /* Assets.xcassets */,
 				B515BD602518858B00D0D456 /* LaunchScreen.storyboard */,
 				B515BD632518858B00D0D456 /* Info.plist */,
+				B515BD87251885E400D0D456 /* DataObject.swift */,
+				B515BD892518867F00D0D456 /* DataDelegate.swift */,
 			);
 			path = "ble demo app";
 			sourceTree = "<group>";
@@ -260,8 +269,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B515BD5A2518858800D0D456 /* ViewController.swift in Sources */,
+				B515BD86251885C900D0D456 /* BluetoothScanner.swift in Sources */,
+				B515BD8A2518867F00D0D456 /* DataDelegate.swift in Sources */,
 				B515BD562518858800D0D456 /* AppDelegate.swift in Sources */,
 				B515BD582518858800D0D456 /* SceneDelegate.swift in Sources */,
+				B515BD88251885E400D0D456 /* DataObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +449,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5D394BCDFH;
 				INFOPLIST_FILE = "ble demo app/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +468,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5D394BCDFH;
 				INFOPLIST_FILE = "ble demo app/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
