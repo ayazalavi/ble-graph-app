@@ -57,6 +57,41 @@ enum SENSORS {
     case GYRO(Double, Double, Double)
     case MAGNEOMETER(Double, Double, Double)
     case ALTITUDE(Int)
+    
+    func getAcc() -> (Double, Double, Double) {
+        switch self {
+        case .Accelerometer(let x, let y, let z):
+            return (x, y, z)
+        default:
+            return (0,0,0)
+        }
+    }
+    
+    func getGyro() -> (Double, Double, Double) {
+        switch self {
+        case .GYRO(let x, let y, let z):
+            return (x, y, z)
+        default:
+            return (0,0,0)
+        }
+    }
+    func getMag() -> (Double, Double, Double) {
+        switch self {
+        case .MAGNEOMETER(let x, let y, let z):
+            return (x, y, z)
+        default:
+            return (0,0,0)
+        }
+    }
+    
+    func getAlt() -> (Int) {
+        switch self {
+        case .ALTITUDE(let x):
+            return (x)
+        default:
+            return (0)
+        }
+    }
 }
 
 extension SENSORS: Codable {
@@ -120,4 +155,8 @@ enum BLE: Int, CaseIterable {
 
 enum DataError: Error {
     case DATACOUNT
+}
+
+enum DataTypes: Int {
+    case ACC, GYRO, MAG, ALT
 }

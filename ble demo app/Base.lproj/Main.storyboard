@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -33,22 +34,71 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Ru0-Fx-GdW"/>
                                 </connections>
                             </tableView>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LP0-E6-H51">
+                                <rect key="frame" x="0.0" y="75" width="414" height="787"/>
+                                <subviews>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hxu-Se-i6o">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                        <items>
+                                            <barButtonItem title="Acc. Meter" id="hUx-fe-f0G">
+                                                <color key="tintColor" red="0.0" green="0.20000000000000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <connections>
+                                                    <action selector="updateGraphType:" destination="BYZ-38-t0r" id="iZ3-gg-3Ta"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="L3Q-dm-5vz"/>
+                                            <barButtonItem tag="1" title="Gyro" id="fms-6x-p4B">
+                                                <color key="tintColor" red="0.0" green="0.20000000000000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                            </barButtonItem>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="SZH-vB-io7"/>
+                                            <barButtonItem tag="2" title="Magneto Meter" id="byO-Ml-5EA">
+                                                <color key="tintColor" red="0.0" green="0.20000000000000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                            </barButtonItem>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="i64-9R-zDB"/>
+                                            <barButtonItem tag="3" title="Altitude" id="fdt-Yh-ySs">
+                                                <color key="tintColor" red="0.0" green="0.20000000000000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                            </barButtonItem>
+                                        </items>
+                                    </toolbar>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U2X-SV-G24" customClass="CPTGraphHostingView">
+                                        <rect key="frame" x="0.0" y="44" width="414" height="743"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstItem="U2X-SV-G24" firstAttribute="top" secondItem="Hxu-Se-i6o" secondAttribute="bottom" id="72G-yp-xJI"/>
+                                    <constraint firstItem="Hxu-Se-i6o" firstAttribute="top" secondItem="LP0-E6-H51" secondAttribute="top" id="JD5-2e-gDM"/>
+                                    <constraint firstItem="U2X-SV-G24" firstAttribute="leading" secondItem="LP0-E6-H51" secondAttribute="leading" id="Whp-Y7-qBw"/>
+                                    <constraint firstAttribute="bottom" secondItem="U2X-SV-G24" secondAttribute="bottom" id="jhI-Xp-BQc"/>
+                                    <constraint firstItem="Hxu-Se-i6o" firstAttribute="leading" secondItem="LP0-E6-H51" secondAttribute="leading" id="qrw-ge-zSd"/>
+                                    <constraint firstAttribute="trailing" secondItem="U2X-SV-G24" secondAttribute="trailing" id="sTo-Oj-a7R"/>
+                                    <constraint firstAttribute="trailing" secondItem="Hxu-Se-i6o" secondAttribute="trailing" id="xLo-Xd-ygW"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="VjO-8k-b09" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="55T-Hg-8JY"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uvL-Yh-MBR" secondAttribute="trailing" id="CRy-0P-EYr"/>
                             <constraint firstAttribute="trailing" secondItem="VjO-8k-b09" secondAttribute="trailing" id="IyQ-Th-Q09"/>
+                            <constraint firstItem="LP0-E6-H51" firstAttribute="top" secondItem="VjO-8k-b09" secondAttribute="bottom" id="QuH-Yl-jtL"/>
                             <constraint firstItem="VjO-8k-b09" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="SCD-pw-Y2K"/>
                             <constraint firstItem="uvL-Yh-MBR" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VO4-5S-sTt"/>
                             <constraint firstItem="uvL-Yh-MBR" firstAttribute="top" secondItem="VjO-8k-b09" secondAttribute="bottom" id="YVH-5T-r1i"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LP0-E6-H51" secondAttribute="trailing" id="YVl-kr-YOH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="uvL-Yh-MBR" secondAttribute="bottom" id="aoF-Ge-Pze"/>
                             <constraint firstItem="VjO-8k-b09" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="l0e-eD-uXP"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="LP0-E6-H51" secondAttribute="bottom" id="lsT-th-pk5"/>
+                            <constraint firstItem="LP0-E6-H51" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="oAz-9E-qnX"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="graphContainer" destination="LP0-E6-H51" id="Bxa-0s-OaX"/>
+                        <outlet property="graphView" destination="U2X-SV-G24" id="Ahz-0C-QmX"/>
                         <outlet property="tableView" destination="uvL-Yh-MBR" id="ckA-4y-qvf"/>
+                        <outlet property="toolbar" destination="Hxu-Se-i6o" id="YPu-wW-Ut0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -23,7 +23,7 @@ class BluetoothScanner: NSObject {
     
     private(set) var peripherals = Dictionary<UUID, CBPeripheral>() {
         didSet {
-            //self.connectToPeripherals()
+            self.connectToPeripherals()
         }
     }
 
@@ -37,17 +37,12 @@ class BluetoothScanner: NSObject {
     
     // MARK: - Callbacks
     @objc func startScanning() {
+        centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "\(restoreID)"])
         print("start scanning")
+    }
+    
+    func loadPeripherals() {
         guard let central = self.centralManager else {
-            centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "\(restoreID)"])
-            if let uuid = UUID(uuidString: cbuuid.uuidString) {
-                if let peripherals_ = centralManager?.retrievePeripherals(withIdentifiers: [uuid]) {
-                    _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
-                }
-                if let peripherals_ = centralManager?.retrieveConnectedPeripherals(withServices: [cbuuid]) {
-                    _ = peripherals_.map({self.peripherals[$0.identifier] = $0})
-                }
-            }
             //print("\(self.peripherals)")
             return
         }
@@ -73,7 +68,7 @@ class BluetoothScanner: NSObject {
                     self?.peripherals[$0.identifier] = $0
                 })
                 if peripherals__.count > 0 || peripherals_.count > 0 {
-                    self?.semaphore.wait()
+                   self?.semaphore.wait()
                 }
                 DispatchQueue.main.async {
                     self?.connectToPeripherals()
@@ -162,7 +157,7 @@ class BluetoothScanner: NSObject {
 // MARK: Central Manager Delegate
 extension BluetoothScanner: CBCentralManagerDelegate {
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        startScanning()
+        loadPeripherals()
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
@@ -185,7 +180,6 @@ extension BluetoothScanner: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Disconnected \(String(describing: error))")
         semaphore.signal()
-        self.connectToPeripherals()
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
