@@ -121,7 +121,7 @@ class ViewController: UIViewController {
         
         let oldRange =  CPTPlotRange(locationDecimal: CPTDecimalFromDouble(Double(range)), lengthDecimal: CPTDecimalFromDouble(Double(maxDataPoints-2)))
         let newRange =  CPTPlotRange(locationDecimal: CPTDecimalFromDouble(Double(location)), lengthDecimal: CPTDecimalFromDouble(Double(maxDataPoints-2)))
-    
+
         CPTAnimation.animate(plotSpace, property: "xRange", from: oldRange, to: newRange, duration:0.3)
         
         self.currentIndex += 1;
@@ -129,11 +129,23 @@ class ViewController: UIViewController {
         
         let point = self.data[0]
         self.plotData.append(point)
+        let (yMin, yMax) = self.plotData.reduce((0, 0)) { (result, newData) -> (Double, Double) in
+            let (x1, y1, z1) = newData.accelerometer.getAcc()
+            let (alt) = newData.altitude.getAlt()
+            let (x2, y2, z2) = newData.gyro.getGyro()
+            let (x3, y3, z3) = newData.magneto.getMag()
+            let ymin = min(x1, y1, z1, Double(alt), x2, y2, z2, x3, y3, z3, result.0)
+            let ymax = max(x1, y1, z1, Double(alt), x2, y2, z2, x3, y3, z3, result.1)
+            return (ymin, ymax)
+        }
+        plotSpace.yRange = CPTPlotRange(locationDecimal: CPTDecimalFromDouble(Double(yMin-1)), lengthDecimal: CPTDecimalFromDouble(Double(yMax - yMin)+2))
 //        xValue.text = #"X: \#(String(format:"%.2f",Double(self.plotData.last!)))"#
 //        yValue.text = #"Y: \#(UInt(self.currentIndex!)) Sec"#
         plot1?.insertData(at: UInt(self.plotData.count-1), numberOfRecords: 1)
         plot2?.insertData(at: UInt(self.plotData.count-1), numberOfRecords: 1)
         plot3?.insertData(at: UInt(self.plotData.count-1), numberOfRecords: 1)
+    
+    
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,7 +196,7 @@ class ViewController: UIViewController {
 
         //Set title for graph
         let titleStyle = CPTMutableTextStyle()
-        titleStyle.color = CPTColor.white()
+        titleStyle.color = CPTColor.init(cgColor: bluecolor.cgColor)
         titleStyle.fontName = "HelveticaNeue-Bold"
         titleStyle.fontSize = 20.0
         titleStyle.textAlignment = .center
