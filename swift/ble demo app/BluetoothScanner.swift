@@ -16,11 +16,12 @@ class BluetoothScanner: NSObject {
     var centralManager: CBCentralManager?
     let semaphore = DispatchSemaphore(value: 0)
     var readTimer: Timer?
-    let cbuuid = CBUUID(string: "4fafc201-1fb5-459e-8fcc-c5c9c331914b")
+    let cbuuid = CBUUID(string: "6e400001-b5a3-f393-e0a9-e50e24dcca9e")
     var data: DataObject?
     weak var delegate: DataDelegate?
     let restoreID = "APP_ID"
-    
+    var samplerate: Double = 0
+
     private(set) var peripherals = Dictionary<UUID, CBPeripheral>() {
         didSet {
             self.connectToPeripherals()
@@ -215,8 +216,18 @@ extension BluetoothScanner: CBPeripheralDelegate {
             self.readTimer?.invalidate()
             self.readTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { (timer) in
                 peripheral.readValue(for: thisCharacteristic)
+                let valueString =  ("\(self.samplerate)" as NSString).data(using: String.Encoding.utf8.rawValue)
+                if let value = valueString, self.samplerate > 0 {
+                    print("writing value string \(valueString), \(value)")
+                    peripheral.writeValue(value, for: thisCharacteristic, type: .withResponse)
+                    self.samplerate = 0
+                }
             }
         }
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        print("value sent")
     }
 
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {

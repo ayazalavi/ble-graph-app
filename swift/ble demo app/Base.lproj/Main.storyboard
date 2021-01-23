@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ble_demo_app" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Graph_app" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C58-az-PuM">
+                                <rect key="frame" x="364" y="44" width="50" height="34"/>
+                                <color key="backgroundColor" red="0.0" green="0.20000000000000001" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="Djw-22-R8U"/>
+                                </constraints>
+                                <state key="normal" title="Send">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendSampleRate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I50-kK-Oyi"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Sample rate (between 1 to 50)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Tp-IS-ldE">
+                                <rect key="frame" x="0.0" y="44" width="364" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="send"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="th0-u8-Fzq"/>
+                                </connections>
+                            </textField>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="VjO-8k-b09">
-                                <rect key="frame" x="0.0" y="44" width="414" height="32"/>
+                                <rect key="frame" x="0.0" y="78" width="414" height="32"/>
                                 <segments>
                                     <segment title="Grid"/>
                                     <segment title="Graph"/>
@@ -27,15 +49,15 @@
                                 </connections>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="30" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uvL-Yh-MBR">
-                                <rect key="frame" x="0.0" y="75" width="414" height="787"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <rect key="frame" x="0.0" y="109" width="414" height="753"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="Hv3-Ui-gY8"/>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Ru0-Fx-GdW"/>
                                 </connections>
                             </tableView>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LP0-E6-H51">
-                                <rect key="frame" x="0.0" y="75" width="414" height="787"/>
+                                <rect key="frame" x="0.0" y="109" width="414" height="753"/>
                                 <subviews>
                                     <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hxu-Se-i6o">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -61,11 +83,11 @@
                                         </items>
                                     </toolbar>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U2X-SV-G24" customClass="CPTGraphHostingView">
-                                        <rect key="frame" x="0.0" y="44" width="414" height="743"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <rect key="frame" x="0.0" y="44" width="414" height="709"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="U2X-SV-G24" firstAttribute="top" secondItem="Hxu-Se-i6o" secondAttribute="bottom" id="72G-yp-xJI"/>
                                     <constraint firstItem="Hxu-Se-i6o" firstAttribute="top" secondItem="LP0-E6-H51" secondAttribute="top" id="JD5-2e-gDM"/>
@@ -77,13 +99,17 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="VjO-8k-b09" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="55T-Hg-8JY"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="C58-az-PuM" secondAttribute="trailing" id="5mh-AR-J6H"/>
+                            <constraint firstItem="2Tp-IS-ldE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9DM-ch-leP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uvL-Yh-MBR" secondAttribute="trailing" id="CRy-0P-EYr"/>
+                            <constraint firstItem="2Tp-IS-ldE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="DS6-px-LGN"/>
                             <constraint firstAttribute="trailing" secondItem="VjO-8k-b09" secondAttribute="trailing" id="IyQ-Th-Q09"/>
                             <constraint firstItem="LP0-E6-H51" firstAttribute="top" secondItem="VjO-8k-b09" secondAttribute="bottom" id="QuH-Yl-jtL"/>
-                            <constraint firstItem="VjO-8k-b09" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="SCD-pw-Y2K"/>
+                            <constraint firstItem="VjO-8k-b09" firstAttribute="top" secondItem="2Tp-IS-ldE" secondAttribute="bottom" id="SCD-pw-Y2K"/>
                             <constraint firstItem="uvL-Yh-MBR" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VO4-5S-sTt"/>
                             <constraint firstItem="uvL-Yh-MBR" firstAttribute="top" secondItem="VjO-8k-b09" secondAttribute="bottom" id="YVH-5T-r1i"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="LP0-E6-H51" secondAttribute="trailing" id="YVl-kr-YOH"/>
@@ -91,12 +117,15 @@
                             <constraint firstItem="VjO-8k-b09" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="l0e-eD-uXP"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="LP0-E6-H51" secondAttribute="bottom" id="lsT-th-pk5"/>
                             <constraint firstItem="LP0-E6-H51" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="oAz-9E-qnX"/>
+                            <constraint firstItem="VjO-8k-b09" firstAttribute="top" secondItem="C58-az-PuM" secondAttribute="bottom" id="ozf-zp-G6X"/>
+                            <constraint firstItem="C58-az-PuM" firstAttribute="leading" secondItem="2Tp-IS-ldE" secondAttribute="trailing" id="p05-7K-LYt"/>
+                            <constraint firstItem="C58-az-PuM" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="tdW-ho-3tz"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="graphContainer" destination="LP0-E6-H51" id="Bxa-0s-OaX"/>
                         <outlet property="graphView" destination="U2X-SV-G24" id="Ahz-0C-QmX"/>
+                        <outlet property="sampleRate" destination="2Tp-IS-ldE" id="shk-34-cSF"/>
                         <outlet property="tableView" destination="uvL-Yh-MBR" id="ckA-4y-qvf"/>
                         <outlet property="toolbar" destination="Hxu-Se-i6o" id="YPu-wW-Ut0"/>
                     </connections>
@@ -106,4 +135,9 @@
             <point key="canvasLocation" x="137.68115942028987" y="138.61607142857142"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

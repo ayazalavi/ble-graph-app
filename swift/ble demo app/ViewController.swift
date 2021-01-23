@@ -10,12 +10,13 @@ import UIKit
 import CorePlot
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var graphView: CPTGraphHostingView!
     @IBOutlet weak var graphContainer: UIView!
     @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var sampleRate: UITextField!
     
     var data: [DataObject] = DataObject.getAll()
     
@@ -332,6 +333,24 @@ class ViewController: UIViewController {
         }
     }
     
+//MARK: TextField Delegate
+    
+    @IBAction func sendSampleRate(_ sender: Any) {
+        let val: Int = Int(sampleRate.text ?? "0") ?? 0
+        let range = 1...50
+        if range.contains(val) {
+            sampleRate.resignFirstResponder()
+            BluetoothScanner.shared.samplerate = Double(val)
+        }
+        else {
+            let alert = UIAlertController(title: "Error", message: "Please pass in values between 1 to 50", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+
 }
 
 extension ViewController: CPTScatterPlotDataSource, CPTScatterPlotDelegate {
